@@ -1,6 +1,7 @@
 package com.emilstrom.tanks;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -14,10 +15,12 @@ import android.os.Build;
 
 public class TankActivity extends Activity {
 	public static final String TAG = "TankGame";
+	public static Context context;
 
 	@Override
 	protected void onCreate(Bundle currentState) {
 		super.onCreate(currentState);
 
+		context = this;
 	}
 }

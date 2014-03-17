@@ -3,12 +3,13 @@ package com.emilstrom.tanks.helper;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import com.emilstrom.slingball.R;
-import com.emilstrom.slingball.SlingBall;
+import com.emilstrom.tanks.TankActivity;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import com.emilstrom.tanks.R;
 
 /**
  * Created by Emil on 2014-02-19.
@@ -25,7 +26,7 @@ public class ShaderHelper {
 	}
 
 	public static String readTextFile(int resourceID) {
-		InputStream inputStream = SlingBall.context.getResources().openRawResource(resourceID);
+		InputStream inputStream = TankActivity.context.getResources().openRawResource(resourceID);
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
 		String retString = "",
@@ -49,7 +50,7 @@ public class ShaderHelper {
 		GLES20.glShaderSource(shader, source);
 		GLES20.glCompileShader(shader);
 
-		Log.v(SlingBall.TAG, GLES20.glGetShaderInfoLog(shader));
+		Log.v(TankActivity.TAG, GLES20.glGetShaderInfoLog(shader));
 
 		return shader;
 	}

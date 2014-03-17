@@ -1,17 +1,15 @@
 package com.emilstrom.tanks.helper;
 
-import com.emilstrom.slingball.GameMath;
-
 /**
  * Created by Emil on 2014-02-20.
  */
 public class Vertex {
-	public double x, y;
+	public float x, y;
 	public Vertex() {
 		x = 0;
 		y = 0;
 	}
-	public Vertex(double xx, double yy) {
+	public Vertex(float xx, float yy) {
 		x = xx;
 		y = yy;
 	}
@@ -32,7 +30,7 @@ public class Vertex {
 		x *= v.x;
 		y *= v.y;
 	}
-	public void multiply(double d) {
+	public void multiply(float d) {
 		x *= d;
 		y *= d;
 	}
@@ -46,14 +44,14 @@ public class Vertex {
 	public Vertex times(Vertex v) {
 		return Vertex.multiply(this, v);
 	}
-	public Vertex times(double d) {
+	public Vertex times(float d) {
 		return Vertex.multiply(this, d);
 	}
 
 	public void copy(Vertex v) { x = v.x; y = v.y; }
 
-	public double getLength() { return getLength(this); }
-	public double getDirection() { return getDirection(this); }
+	public float getLength() { return getLength(this); }
+	public float getDirection() { return getDirection(this); }
 
 	public boolean compare(Vertex v) { return (x == v.x && y == v.y); }
 
@@ -69,12 +67,12 @@ public class Vertex {
 		return new Vertex(a.x * b.x, a.x * b.y);
 	}
 
-	public static Vertex multiply(Vertex a, double d) {
+	public static Vertex multiply(Vertex a, float d) {
 		return new Vertex(a.x * d, a.y * d);
 	}
 
 	public static Vertex normalize(Vertex v) {
-		double l = Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
+		float l = (float)Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
 		return new Vertex(v.x / l, v.y / l);
 	}
 
@@ -82,21 +80,21 @@ public class Vertex {
 		return normalize(subtract(b, a));
 	}
 
-	public static double getLength(Vertex a, Vertex b) {
+	public static float getLength(Vertex a, Vertex b) {
 		Vertex v = subtract(a, b);
 
 		return v.getLength();
 	}
 
-	public static double getDirection(Vertex a, Vertex b) {
-		return GameMath.getDirection(a.x, a.y, b.x, b.y);
+	public static float getDirection(Vertex a, Vertex b) {
+		return (float)GameMath.getDirection(a.x, a.y, b.x, b.y);
 	}
 
-	public static double getLength(Vertex v) {
-		return Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
+	public static float getLength(Vertex v) {
+		return (float)Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
 	}
 
-	public static double getDirection(Vertex v) {
-		return GameMath.getDirection(v.x, v.y, 0, 0);
+	public static float getDirection(Vertex v) {
+		return (float)GameMath.getDirection(v.x, v.y, 0, 0);
 	}
 }

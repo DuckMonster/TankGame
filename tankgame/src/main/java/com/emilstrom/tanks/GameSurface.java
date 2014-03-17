@@ -6,8 +6,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.emilstrom.slingball.game.Game;
-import com.emilstrom.slingball.helper.InputHelper;
+import com.emilstrom.tanks.game.Game;
+import com.emilstrom.tanks.helper.InputHelper;
 
 /**
  * Created by Emil on 2014-02-18.
@@ -77,10 +77,10 @@ public class GameSurface extends GLSurfaceView implements Runnable {
 
 		while(running) {
 			double newTime = SystemClock.uptimeMillis();
-			Game.updateTime = (newTime - oldTime) * 0.001;
+			double time = (newTime - oldTime) * 0.001;
 			oldTime = newTime;
 
-			game.logic();
+			game.logic(time);
 			requestRender();
 
 			try{Thread.sleep(8);} catch(Exception e) {}
