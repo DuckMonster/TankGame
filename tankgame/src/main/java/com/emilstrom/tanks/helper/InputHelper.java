@@ -22,7 +22,7 @@ public class InputHelper {
 		float coords[] = {x, y, 0f, 1f},
 				invVP[] = new float[16];
 
-		Matrix.invertM(invVP, 0, Game.currentGame.getViewProjection(), 0);
+		Matrix.invertM(invVP, 0, Game.currentGame.getViewProjection(Game.uiCamera), 0);
 
 		Matrix.multiplyMV(coords, 0, invVP, 0, coords, 0);
 		return new float[]{coords[0], coords[1]};

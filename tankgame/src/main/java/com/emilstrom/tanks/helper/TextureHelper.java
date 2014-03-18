@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
-import com.emilstrom.slingball.SlingBall;
+import com.emilstrom.tanks.TankActivity;
 
 /**
  * Created by Emil on 2014-02-19.
@@ -20,7 +20,7 @@ public class TextureHelper {
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inScaled = false;
 
-			Bitmap b = BitmapFactory.decodeResource(SlingBall.context.getResources(), resourceID, options);
+			Bitmap b = BitmapFactory.decodeResource(TankActivity.context.getResources(), resourceID, options);
 
 			if (size != null) {
 				size[0] = b.getWidth();

@@ -17,10 +17,15 @@ public class TankActivity extends Activity {
 	public static final String TAG = "TankGame";
 	public static Context context;
 
+	GameSurface surface;
+
 	@Override
 	protected void onCreate(Bundle currentState) {
 		super.onCreate(currentState);
 
 		context = this;
+		surface = new GameSurface(this);
+
+		setContentView(surface);
 	}
 }

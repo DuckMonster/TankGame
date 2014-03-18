@@ -1,11 +1,10 @@
 package com.emilstrom.tanks.helper;
 
-import com.emilstrom.slingball.game.TiledSprite;
-
 /**
  * Created by Emil on 2014-02-25.
  */
 public class TextWriter {
+	/*
 	static Vertex textScale = new Vertex(1.0, 1.0);
 	static TiledSprite tileSet = new TiledSprite();
 
@@ -34,4 +33,5 @@ public class TextWriter {
 			}
 		}
 	}
+	*/
 }

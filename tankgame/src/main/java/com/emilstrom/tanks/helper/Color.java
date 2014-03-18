@@ -4,7 +4,7 @@ package com.emilstrom.tanks.helper;
  * Created bg Emil on 2014-02-20.
  */
 public class Color {
-	public double r, g, b, a;
+	public float r, g, b, a;
 	public Color() {
 		r = 0;
 		g = 0;
@@ -16,14 +16,14 @@ public class Color {
 		copy(c);
 	}
 
-	public Color(double rr, double gg, double bb) {
+	public Color(float rr, float gg, float bb) {
 		r = rr;
 		g = gg;
 		b = bb;
 		a = 1f;
 	}
 
-	public Color(double rr, double gg, double bb, double aa) {
+	public Color(float rr, float gg, float bb, float aa) {
 		r = rr;
 		g = gg;
 		b = bb;
@@ -31,10 +31,10 @@ public class Color {
 	}
 
 	public Color(int rr, int gg, int bb, int aa) {
-		r = (double)rr / 255.0;
-		g = (double)gg / 255.0;
-		b = (double)bb / 255.0;
-		a = (double)aa / 255.0;
+		r = (float)rr / 255.0f;
+		g = (float)gg / 255.0f;
+		b = (float)bb / 255.0f;
+		a = (float)aa / 255.0f;
 	}
 
 	public void add(Color v) {
@@ -73,7 +73,7 @@ public class Color {
 		a = c.a;
 	}
 
-	public void copy(double r, double g, double b, double a) {
+	public void copy(float r, float g, float b, float a) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
@@ -81,10 +81,10 @@ public class Color {
 	}
 
 	public void confine() {
-		if (r > 1.0) r = 1.0;
-		if (g > 1.0) g = 1.0;
-		if (b > 1.0) b = 1.0;
-		if (a > 1.0) a = 1.0;
+		if (r > 1.0) r = 1.0f;
+		if (g > 1.0) g = 1.0f;
+		if (b > 1.0) b = 1.0f;
+		if (a > 1.0) a = 1.0f;
 	}
 
 	public static Color add(Color c1, Color c2) {
@@ -99,8 +99,8 @@ public class Color {
 		return new Color(c1.r * c2.r, c1.g * c2.g, c1.b * c2.b, c1.a * c2.a);
 	}
 
-	public static Color blend(Color c1, Color c2, double v) {
-		double r = c1.r + (c2.r - c1.r)*v,
+	public static Color blend(Color c1, Color c2, float v) {
+		float r = c1.r + (c2.r - c1.r)*v,
 				g = c1.g + (c2.g - c1.g)*v,
 				b = c1.b + (c2.b - c1.b)*v,
 				a = c1.a + (c2.a - c1.a)*v;
