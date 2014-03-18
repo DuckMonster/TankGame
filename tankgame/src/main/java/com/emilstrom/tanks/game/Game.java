@@ -40,9 +40,9 @@ public class Game implements GLSurfaceView.Renderer {
 		float r = (float)SystemClock.uptimeMillis() * 0.05f;
 		worldCamera.setRotation(r);
 
-		//temp.draw(new Vertex(0,0), new Vertex(5, 5), r);
-		//temp.draw(new Vertex(5,0), new Vertex(5, 5), 0);
-		temp2.draw(new Vertex(-5,0), new Vertex(5, 5), r);
+		temp.draw(new Vertex(0,0), new Vertex(5, 5), r);
+		temp.draw(new Vertex(5,0), new Vertex(5, 5), 0);
+		temp2.draw(new Vertex(-gameWidth/2,0), new Vertex(5, 5), r);
 	}
 
 
@@ -55,6 +55,7 @@ public class Game implements GLSurfaceView.Renderer {
 	}
 
 
+	float gameHeight, gameWidth;
 
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 		GLES20.glClearColor(1f, 0f, 0f, 1f);
@@ -76,5 +77,8 @@ public class Game implements GLSurfaceView.Renderer {
 		Matrix.orthoM(projection, 0, -w, w, -10f, 10f, 2f, 10f);
 		worldCamera = new Camera();
 		uiCamera = new Camera();
+
+		gameWidth = w*2;
+		gameHeight = 20f;
 	}
 }

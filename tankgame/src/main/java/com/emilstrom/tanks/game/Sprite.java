@@ -31,7 +31,6 @@ public class Sprite {
 	}
 
 	public void bindVertexBuffer() {
-		GLES20.glUseProgram(ShaderHelper.shaderProgram2D);
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferObject);
 	}
 
@@ -110,7 +109,9 @@ public class Sprite {
 
 
 	public void draw(Vertex pos) {
-		bindVertexBuffer();
+		GLES20.glUseProgram(ShaderHelper.shaderProgram2D);
+		loadAttributes();
+
 		setPosition(pos);
 		draw();
 	}
@@ -119,7 +120,9 @@ public class Sprite {
 	}
 
 	public void draw(Vertex pos, Vertex scale, float r) {
-		bindVertexBuffer();
+		GLES20.glUseProgram(ShaderHelper.shaderProgram2D);
+		loadAttributes();
+
 		setPosition(pos);
 		scale(scale);
 		rotate(r);
