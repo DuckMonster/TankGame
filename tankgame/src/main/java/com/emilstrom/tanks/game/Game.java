@@ -18,7 +18,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by Emil on 2014-03-17.
  */
 public class Game implements GLSurfaceView.Renderer {
-	public static double updateTime;
+	public static float updateTime;
 	public static Game currentGame;
 	public static Camera worldCamera, uiCamera;
 
@@ -29,7 +29,7 @@ public class Game implements GLSurfaceView.Renderer {
 		map = new Map(this);
 	}
 
-	public void logic(double time) {
+	public void logic(float time) {
 		updateTime = time;
 		map.logic();
 	}
@@ -37,8 +37,8 @@ public class Game implements GLSurfaceView.Renderer {
 	public void draw() {
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
-		//GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-		//GLES20.glEnable(GLES20.GL_BLEND);
+		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+		GLES20.glEnable(GLES20.GL_BLEND);
 
 		map.draw();
 	}

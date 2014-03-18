@@ -80,7 +80,7 @@ public class GameSurface extends GLSurfaceView implements Runnable {
 			double time = (newTime - oldTime) * 0.001;
 			oldTime = newTime;
 
-			game.logic(time);
+			game.logic((float)time);
 			requestRender();
 
 			try{Thread.sleep(8);} catch(Exception e) {}
