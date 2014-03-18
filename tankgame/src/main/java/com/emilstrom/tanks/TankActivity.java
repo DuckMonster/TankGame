@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.FrameLayout;
 
 public class TankActivity extends Activity {
 	public static final String TAG = "TankGame";
@@ -23,9 +24,12 @@ public class TankActivity extends Activity {
 	protected void onCreate(Bundle currentState) {
 		super.onCreate(currentState);
 
+		setContentView(R.layout.activity_tank);
+
 		context = this;
 		surface = new GameSurface(this);
 
-		setContentView(surface);
+		FrameLayout frame = (FrameLayout)findViewById(R.id.container);
+		frame.addView(surface);
 	}
 }

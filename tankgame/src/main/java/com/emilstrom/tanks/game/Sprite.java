@@ -165,10 +165,10 @@ public class Sprite {
 
 	public void genVertexData(Vertex origin) {
 		float data[] = {
-				-0.5f - origin.x, -0.5f - origin.y,		0f, 0f,
-				0.5f - origin.x, -0.5f - origin.y,		1f, 0f,
-				-0.5f - origin.x, 0.5f - origin.y,		0f, 1f,
-				0.5f - origin.x, 0.5f - origin.y,		1f, 1f
+				-0.5f - origin.x, -0.5f - origin.y,		0f, 1f,
+				0.5f - origin.x, -0.5f - origin.y,		1f, 1f,
+				-0.5f - origin.x, 0.5f - origin.y,		0f, 0f,
+				0.5f - origin.x, 0.5f - origin.y,		1f, 0f
 		};
 
 		vertexData = ByteBuffer.allocateDirect(data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();

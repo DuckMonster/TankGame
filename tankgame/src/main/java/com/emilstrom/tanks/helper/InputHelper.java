@@ -1,6 +1,9 @@
 package com.emilstrom.tanks.helper;
 
 import android.opengl.Matrix;
+import android.util.Log;
+
+import com.emilstrom.tanks.TankActivity;
 import com.emilstrom.tanks.game.Game;
 
 /**
@@ -19,6 +22,10 @@ public class InputHelper {
 	}
 
 	public static float[] getGameCoords(float x, float y) {
+		if (Game.uiCamera == null) {
+			return new float[]{0, 0};
+		}
+
 		float coords[] = {x, y, 0f, 1f},
 				invVP[] = new float[16];
 
