@@ -1,10 +1,8 @@
 package com.emilstrom.tanks.game.entity;
 
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.emilstrom.tanks.R;
-import com.emilstrom.tanks.TankActivity;
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
 import com.emilstrom.tanks.helper.Color;
@@ -23,12 +21,12 @@ public class Tank extends Actor {
 	Vertex shootButtonPosition = new Vertex(0f, 0f);
 
 	Sprite uiBox, triangle;
-	Input input, oldInput;
+	Input input[], oldInput[];
 
 	float rotation, velocity;
 	final float maxVelocity = 8f, acceleration = 30f, friction = 40f, turnSpeed = 120f;
 
-	boolean usingMovement = false;
+	int movementTouchID = -1;
 	Vertex movementPosition;
 
 	Bullet bulletList[] = new Bullet[5];
@@ -51,21 +49,25 @@ public class Tank extends Actor {
 		input = InputHelper.getInput();
 		if (oldInput == null) oldInput = input;
 
-		if (input.pressed && !oldInput.pressed) {
-			//Check movement input
-			if (input.position.x >= movementControlPosition.x && input.position.x < movementControlPosition.x + movementControlSize.x &&
-					input.position.y >= movementControlPosition.y && input.position.y < movementControlPosition.y + movementControlSize.y) {
-				usingMovement = true;
-			}
+		for(int i=0; i<input.length; i++) {
+			if (input[i].pressed && !oldInput[i].pressed) {
+				final Vertex inPos = input[i].position;
 
-			//Check shooting input
-			if (input.position.x >= shootButtonPosition.x && input.position.x < shootButtonPosition.x + shootButtonSize.x &&
-					input.position.y >= shootButtonPosition.y && input.position.y < shootButtonPosition.y + shootButtonSize.y) {
-				shoot();
+				//Check movement input
+				if (movementTouchID == -1 && inPos.x >= movementControlPosition.x && inPos.x < movementControlPosition.x + movementControlSize.x &&
+						inPos.y >= movementControlPosition.y && inPos.y < movementControlPosition.y + movementControlSize.y) {
+					movementTouchID = i;
+				}
+
+				//Check shooting input
+				if (inPos.x >= shootButtonPosition.x && inPos.x < shootButtonPosition.x + shootButtonSize.x &&
+						inPos.y >= shootButtonPosition.y && inPos.y < shootButtonPosition.y + shootButtonSize.y) {
+					shoot();
+				}
 			}
 		}
 
-		if (!input.pressed) usingMovement = false;
+		if (movementTouchID != -1 && !input[movementTouchID].pressed) movementTouchID = -1;
 
 		movement();
 
@@ -81,8 +83,8 @@ public class Tank extends Actor {
 
 	public void movement() {
 		//Move!
-		if (usingMovement) {
-			movementPosition = new Vertex(input.position.minus(movementControlPosition));
+		if (movementTouchID != -1) {
+			movementPosition = new Vertex(input[movementTouchID].position.minus(movementControlPosition));
 
 			if (movementPosition.x > movementControlSize.x) movementPosition.x = movementControlSize.x;
 			if (movementPosition.x <= 0) movementPosition.x = 0;
@@ -125,6 +127,8 @@ public class Tank extends Actor {
 
 		bulletList[bulletn] = new Bullet(position, directionVertex, game);
 		bulletn = (bulletn + 1) % bulletList.length;
+
+		velocity = -10f;
 	}
 
 	public void draw() {
@@ -133,7 +137,7 @@ public class Tank extends Actor {
 		uiBox.draw(movementControlPosition, movementControlSize, 0);
 		uiBox.draw(shootButtonPosition, shootButtonSize, 0);
 
-		if (usingMovement) {
+		if (movementTouchID != -1) {
 			for(int i=0; i<4; i++) {
 				float r = SystemClock.uptimeMillis() * 0.05f;
 				float xx = (float)GameMath.lengthDirX(r + 90*i, 1f),

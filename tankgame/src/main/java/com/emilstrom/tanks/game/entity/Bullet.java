@@ -22,7 +22,7 @@ public class Bullet extends Entity {
 
 		position = new Vertex(pos);
 		direction = new Vertex(dir);
-		velocity = 5f;
+		velocity = 90f;
 		energy = 100f;
 	}
 
@@ -31,6 +31,6 @@ public class Bullet extends Entity {
 	}
 
 	public void draw() {
-		bulletSprite.draw(position, new Vertex(2f, 5f), direction.getDirection() - 90);
+		bulletSprite.draw(position, new Vertex(0.7f, 3f), direction.getDirection() - 90);
 	}
 }

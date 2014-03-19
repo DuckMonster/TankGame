@@ -10,15 +10,36 @@ import com.emilstrom.tanks.game.Game;
  * Created by Emil on 2014-02-19.
  */
 public class InputHelper {
-	static boolean pressed;
-	static float x, y;
+	static boolean pressed[] = new boolean[5];
+	static float x[] = new float[5], y[] = new float[5];
 
-	public static void setPressed(boolean p) { pressed = p; }
-	public static void setPosition(float xx, float yy) { x = xx; y = yy; }
+	public static void setPressed(int id, boolean p) {
+		if (id >= 5) return;
 
-	public static Input getInput() {
-		float gameCoords[] = getGameCoords(x, y);
-		return new Input(gameCoords[0], gameCoords[1], pressed);
+		pressed[id] = p;
+	}
+	public static void setPosition(int id, float xx, float yy) {
+		if (id >= 5) return;
+
+		x[id] = xx; y[id] = yy;
+	}
+
+	public static Input[] getInput() {
+		Input ret[] = new Input[5];
+
+		for(int i=0; i<5; i++) {
+			float coords[];
+
+			if (pressed[i]) {
+				coords = getGameCoords(x[i], y[i]);
+			} else {
+				coords = new float[]{0, 0};
+			}
+
+			ret[i] = new Input(coords[0], coords[1], pressed[i]);
+		}
+
+		return ret;
 	}
 
 	public static float[] getGameCoords(float x, float y) {

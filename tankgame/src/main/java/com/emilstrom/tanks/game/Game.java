@@ -59,7 +59,7 @@ public class Game implements GLSurfaceView.Renderer {
 	public float gameHeight, gameWidth;
 
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-		GLES20.glClearColor(1f, 1f, 1f, 1f);
+		GLES20.glClearColor(0f, 0f, 0f, 1f);
 
 		ShaderHelper.loadShader();
 	}
