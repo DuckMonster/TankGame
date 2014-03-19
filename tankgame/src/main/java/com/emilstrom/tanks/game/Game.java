@@ -25,6 +25,9 @@ public class Game implements GLSurfaceView.Renderer {
 	Map map;
 
 	public Game() {
+		worldCamera = new Camera();
+		uiCamera = new Camera();
+
 		currentGame = this;
 		map = new Map(this);
 	}
@@ -56,7 +59,7 @@ public class Game implements GLSurfaceView.Renderer {
 	public float gameHeight, gameWidth;
 
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-		GLES20.glClearColor(1f, 0f, 0f, 1f);
+		GLES20.glClearColor(1f, 1f, 1f, 1f);
 
 		ShaderHelper.loadShader();
 	}
@@ -69,8 +72,6 @@ public class Game implements GLSurfaceView.Renderer {
 		float h = (float)height / (float)width;
 		h *= 10f;
 		Matrix.orthoM(projection, 0, -10f, 10f, -h, h, 2f, 10f);
-		worldCamera = new Camera();
-		uiCamera = new Camera();
 
 		gameHeight = h*2;
 		gameWidth = 20f;

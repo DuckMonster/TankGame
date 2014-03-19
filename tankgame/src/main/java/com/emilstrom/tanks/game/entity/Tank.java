@@ -19,15 +19,20 @@ import com.emilstrom.tanks.helper.Vertex;
 public class Tank extends Actor {
 	Vertex movementControlSize = new Vertex(5f, 5f);
 	Vertex movementControlPosition = new Vertex(0f, 0f);
+	Vertex shootButtonSize = new Vertex(3f, 3f);
+	Vertex shootButtonPosition = new Vertex(0f, 0f);
 
 	Sprite uiBox, triangle;
 	Input oldInput;
 
 	float rotation, velocity;
-	final float maxVelocity = 8f, acceleration = 90f, turnSpeed = 120f;
+	final float maxVelocity = 8f, acceleration = 30f, friction = 40f, turnSpeed = 120f;
 
 	boolean usingMovement = false;
 	Vertex movementPosition;
+
+	Bullet bulletList[] = new Bullet[5];
+	int bulletn = 0;
 
 	public Tank(Game g) {
 		super(g);
@@ -48,6 +53,9 @@ public class Tank extends Actor {
 			if (in.position.x >= movementControlPosition.x && in.position.x < movementControlPosition.x + movementControlSize.x &&
 					in.position.y >= movementControlPosition.y && in.position.y < movementControlPosition.y + movementControlSize.y) {
 				usingMovement = true;
+			} else if (in.position.x >= shootButtonPosition.x && in.position.x < shootButtonPosition.x + shootButtonSize.x &&
+					in.position.y >= shootButtonPosition.y && in.position.y < shootButtonPosition.y + shootButtonSize.y) {
+				shoot();
 			}
 		}
 
@@ -65,32 +73,54 @@ public class Tank extends Actor {
 			float xPerc = movementPosition.x / movementControlSize.x * 2.0f - 1.0f,
 					yPerc = movementPosition.y / movementControlSize.y * 2.0f - 1.0f;
 
-			Log.v(TankActivity.TAG, Float.toString(xPerc) + "/" + Float.toString(yPerc));
+			if (Math.abs(xPerc) > 0.2f)
+				rotation += turnSpeed * -xPerc * Game.updateTime;
 
-			rotation += turnSpeed * -xPerc * Game.updateTime;
+			if (Math.abs(yPerc) > 0.2f) {
+				float acc = (acceleration + friction) * Game.updateTime;
 
-			if (yPerc > 0f) {
-				if (velocity + acceleration*Game.updateTime < maxVelocity*yPerc) velocity += acceleration*Game.updateTime;
-			} else if (yPerc < 0f) {
-				if (velocity + acceleration*Game.updateTime > maxVelocity*yPerc) velocity -= acceleration*Game.updateTime;
+				if (yPerc > 0f) {
+					if (velocity + acc < maxVelocity*yPerc) velocity += acc;
+				} else if (yPerc < 0f) {
+					if (velocity + acc > maxVelocity*yPerc) velocity -= acc;
+				}
 			}
-
-			Log.v(TankActivity.TAG, Float.toString(xPerc) + "/" + Float.toString(yPerc) + "   = " + Float.toString(velocity) + "/" + Float.toString(maxVelocity));
 		}
 
 		Vertex directionVertex = new Vertex(-(float)Math.sin(rotation / 180f * Math.PI), (float)Math.cos(rotation / 180f * Math.PI));
 
 		position.add(directionVertex.times(velocity*Game.updateTime));
 
-		velocity -= velocity * 5f * Game.updateTime;
+		//Friction
+		float f = friction * Game.updateTime;
+
+		if (velocity > 0) {
+			velocity = Math.max(0, velocity - f);
+		} else {
+			velocity = Math.min(0, velocity + f);
+		}
+
+
+		//Move camera
+		Vertex cameraPosition = position.plus(directionVertex.times(3f));
+		Game.worldCamera.position.add(cameraPosition.minus(Game.worldCamera.position).times(Game.updateTime * 10f));
+		Game.worldCamera.setRotation(rotation);
 
 		oldInput = in;
+	}
+
+	public void shoot() {
+		Vertex directionVertex = new Vertex(-(float)Math.sin(rotation / 180f * Math.PI), (float)Math.cos(rotation / 180f * Math.PI));
+
+		bulletList[bulletn] = new Bullet(position, directionVertex, game);
+		bulletn = (bulletn + 1) % bulletList.length;
 	}
 
 	public void draw() {
 		sprite.draw(position, new Vertex(3,3), rotation);
 		uiBox.setColor(new Color(1f, 1f, 1f, 0.3f));
 		uiBox.draw(movementControlPosition, movementControlSize, 0);
+		uiBox.draw(shootButtonPosition, shootButtonSize, 0);
 
 		if (usingMovement) {
 			for(int i=0; i<4; i++) {
@@ -108,6 +138,7 @@ public class Tank extends Actor {
 		uiBox.loadAssets();
 		triangle.loadAssets();
 		movementControlPosition = new Vertex(10f - movementControlSize.x - 0.7f, -game.gameHeight/2 + 0.7f);
+		shootButtonPosition = new Vertex(-10f + 0.7f, -game.gameHeight/2 + 1.4f);
 
 		super.loadAssets();
 	}

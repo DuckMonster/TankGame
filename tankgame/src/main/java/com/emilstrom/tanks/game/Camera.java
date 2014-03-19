@@ -8,7 +8,7 @@ import com.emilstrom.tanks.helper.Vertex;
  * Created by Emil on 2014-03-17.
  */
 public class Camera {
-	Vertex position;
+	public Vertex position;
 	float rotation;
 
 	public Camera() {
