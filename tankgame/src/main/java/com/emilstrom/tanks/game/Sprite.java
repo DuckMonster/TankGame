@@ -18,28 +18,20 @@ import java.nio.FloatBuffer;
 public class Sprite {
 	float modelMatrix[] = new float[16];
 	Color spriteColor, spriteAlphaColor;
-	Camera currentCamera;
 	boolean isUI;
 
-	public Sprite(int textureID, Vertex origin, boolean isUI) {
-		this.textureID = textureID;
-		vertexOrigin = new Vertex(origin);
+	SpriteData spriteData;
+
+	public Sprite(SpriteData data, boolean isUI) {
+		spriteData = data;
 
 		setColor(1f, 1f, 1f, 1f);
 		setAlphaColor(1f, 0f, 1f);
 		this.isUI = isUI;
 	}
 
-	public void bindVertexBuffer() {
-		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferObject);
-	}
-
 	public void resetMatrix() {
 		Matrix.setIdentityM(modelMatrix, 0);
-	}
-
-	public void setCamera(Camera c) {
-		currentCamera = c;
 	}
 
 	public void setColor(Color c) {
@@ -84,22 +76,12 @@ public class Sprite {
 
 	public float[] getMVPMatrix() {
 		float mvp[] = new float[16];
-		Matrix.multiplyMM(mvp, 0, Game.currentGame.getViewProjection(currentCamera), 0, modelMatrix, 0);
+		Matrix.multiplyMM(mvp, 0, Game.currentGame.getViewProjection(isUI ? Game.uiCamera : Game.worldCamera), 0, modelMatrix, 0);
 		return mvp;
 	}
 
 	public void uploadData() {
-		setCamera(isUI ? Game.uiCamera : Game.worldCamera);
-
-		float mvpMatrix[] = getMVPMatrix();
-		GLES20.glUniformMatrix4fv(u_mvp, 1, false, mvpMatrix, 0);
-
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandler);
-		GLES20.glUniform1i(u_texture, 0);
-
-		GLES20.glUniform4f(u_color, spriteColor.r, spriteColor.g, spriteColor.b, spriteColor.a);
-		GLES20.glUniform3f(u_alphaColor, spriteAlphaColor.r, spriteAlphaColor.g, spriteAlphaColor.b);
+		spriteData.uploadData(spriteColor, spriteAlphaColor, getMVPMatrix());
 	}
 
 	public void draw() {
@@ -110,7 +92,7 @@ public class Sprite {
 
 	public void draw(Vertex pos) {
 		GLES20.glUseProgram(ShaderHelper.shaderProgram2D);
-		loadAttributes();
+		spriteData.loadAttributes();
 
 		setPosition(pos);
 		draw();
@@ -121,7 +103,7 @@ public class Sprite {
 
 	public void draw(Vertex pos, Vertex scale, float r) {
 		GLES20.glUseProgram(ShaderHelper.shaderProgram2D);
-		loadAttributes();
+		spriteData.loadAttributes();
 
 		setPosition(pos);
 		rotate(r);
@@ -133,71 +115,5 @@ public class Sprite {
 	}
 	public void draw(float x, float y, float scalex, float scaley, float r) {
 		draw(new Vertex(x, y), new Vertex(scalex, scaley), r);
-	}
-
-
-
-	//GL ASSETS
-	FloatBuffer vertexData;
-	Vertex vertexOrigin;
-
-	protected int textureID, textureHandler;
-	protected int vertexBufferObject;
-	protected int a_position, a_texturePosition;
-	protected int u_color, u_mvp, u_texture, u_alphaColor;
-
-	public void loadAssets() {
-		setupVertexObject();
-		loadTexture();
-		genVertexData(vertexOrigin);
-		loadAttributes();
-	}
-
-	public void setupVertexObject() {
-		int buffers[] = new int[1];
-		GLES20.glGenBuffers(1, buffers, 0);
-		vertexBufferObject = buffers[0];
-	}
-
-	public void loadTexture() {
-		textureHandler = TextureHelper.loadTexture(textureID);
-	}
-
-	public void genVertexData(Vertex origin) {
-		float data[] = {
-				-0.5f - origin.x, -0.5f - origin.y,		0f, 1f,
-				0.5f - origin.x, -0.5f - origin.y,		1f, 1f,
-				-0.5f - origin.x, 0.5f - origin.y,		0f, 0f,
-				0.5f - origin.x, 0.5f - origin.y,		1f, 0f
-		};
-
-		vertexData = ByteBuffer.allocateDirect(data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-		vertexData.put(data);
-		vertexData.position(0);
-
-		uploadVertexData();
-	}
-
-	public void uploadVertexData() {
-		bindVertexBuffer();
-		GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, vertexData.capacity() * 4, vertexData, GLES20.GL_STATIC_DRAW);
-	}
-
-	public void loadAttributes() {
-		bindVertexBuffer();
-
-		u_color = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_color");
-		u_alphaColor = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_alphaColor");
-		u_texture = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_texture");
-		u_mvp = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_mvpMatrix");
-
-		a_position = GLES20.glGetAttribLocation(ShaderHelper.shaderProgram2D, "a_vertexPosition");
-		a_texturePosition = GLES20.glGetAttribLocation(ShaderHelper.shaderProgram2D, "a_texturePosition");
-
-		GLES20.glEnableVertexAttribArray(a_position);
-		GLES20.glEnableVertexAttribArray(a_texturePosition);
-
-		GLES20.glVertexAttribPointer(a_position, 2, GLES20.GL_FLOAT, false, 4 * 4, 0);
-		GLES20.glVertexAttribPointer(a_texturePosition, 2, GLES20.GL_FLOAT, false, 4 * 4, 2 * 4);
 	}
 }

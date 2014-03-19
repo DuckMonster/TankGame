@@ -3,14 +3,16 @@ package com.emilstrom.tanks.game.entity;
 import com.emilstrom.tanks.R;
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
+import com.emilstrom.tanks.game.effect.EffectExplosion;
 import com.emilstrom.tanks.game.tiles.Tile;
+import com.emilstrom.tanks.helper.Art;
 import com.emilstrom.tanks.helper.Vertex;
 
 /**
  * Created by Emil on 2014-03-18.
  */
 public class Bullet extends Entity {
-	static Sprite bulletSprite = new Sprite(R.drawable.blank, new Vertex(0,0), false);
+	Sprite bulletSprite;
 
 	Vertex position;
 
@@ -18,18 +20,26 @@ public class Bullet extends Entity {
 	float velocity;
 	float energy;
 
+	EffectExplosion explosionEffect;
+
 	public Bullet(Vertex pos, Vertex dir, Game g) {
 		super(g);
+
+		bulletSprite = new Sprite(Art.blank, false);
 
 		position = new Vertex(pos);
 		direction = new Vertex(dir);
 		velocity = 90f;
 		energy = 30f;
+
+		explosionEffect = new EffectExplosion(game);
 	}
 
 	public boolean isDead() { return energy <= 0; }
 
 	public void logic() {
+		explosionEffect.logic();
+
 		if (isDead()) return;
 
 		int precision = 40;
@@ -50,10 +60,13 @@ public class Bullet extends Entity {
 	}
 
 	public void blowUp(Vertex pos) {
+		explosionEffect.trigger(pos);
 		game.map.tileHandler.explosion(pos, 5f, 1);
 	}
 
 	public void draw() {
+		explosionEffect.draw();
+
 		if (isDead()) return;
 
 		bulletSprite.draw(position, new Vertex(0.7f, 3f), direction.getDirection() - 90);

@@ -76,10 +76,4 @@ public class TileHandler {
 				tileMap[xx + mapWidth * yy].draw();
 			}
 	}
-
-
-
-	public void loadAssets() {
-		for(Tile t: tileMap) t.loadAssets();
-	}
 }

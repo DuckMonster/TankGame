@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import com.emilstrom.tanks.R;
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
+import com.emilstrom.tanks.helper.Art;
 import com.emilstrom.tanks.helper.Color;
 import com.emilstrom.tanks.helper.GameMath;
 import com.emilstrom.tanks.helper.Input;
@@ -15,12 +16,14 @@ import com.emilstrom.tanks.helper.Vertex;
  * Created by Emil on 2014-03-18.
  */
 public class Tank extends Actor {
+	Sprite uiBox, triangle;
+
 	Vertex movementControlSize = new Vertex(5f, 5f);
 	Vertex movementControlPosition = new Vertex(0f, 0f);
 	Vertex shootButtonSize = new Vertex(3f, 3f);
 	Vertex shootButtonPosition = new Vertex(0f, 0f);
 
-	Sprite uiBox, triangle;
+
 	Input input[], oldInput[];
 
 	float rotation, velocity;
@@ -35,9 +38,9 @@ public class Tank extends Actor {
 	public Tank(Game g) {
 		super(g);
 
-		sprite = new Sprite(R.drawable.tank, new Vertex(0,0), false);
-		uiBox = new Sprite(R.drawable.blank, new Vertex(-0.5f, -0.5f), true);
-		triangle = new Sprite(R.drawable.triangle, new Vertex(0,0), true);
+		sprite = new Sprite(Art.tank, false);
+		uiBox = new Sprite(Art.blank, true);
+		triangle = new Sprite(Art.triangle, true);
 		position = new Vertex(0,0);
 	}
 
@@ -135,8 +138,8 @@ public class Tank extends Actor {
 	public void draw() {
 		sprite.draw(position, new Vertex(3,3), rotation);
 		uiBox.setColor(new Color(1f, 1f, 1f, 0.3f));
-		uiBox.draw(movementControlPosition, movementControlSize, 0);
-		uiBox.draw(shootButtonPosition, shootButtonSize, 0);
+		uiBox.draw(movementControlPosition.plus(movementControlSize.times(0.5f)), movementControlSize, 0);
+		uiBox.draw(shootButtonPosition.plus(shootButtonSize.times(0.5f)), shootButtonSize, 0);
 
 		if (movementTouchID != -1) {
 			for(int i=0; i<4; i++) {
@@ -152,14 +155,8 @@ public class Tank extends Actor {
 	}
 
 
-	public void loadAssets() {
-		uiBox.loadAssets();
-		triangle.loadAssets();
-		movementControlPosition = new Vertex(10f - movementControlSize.x - 0.7f, -game.gameHeight/2 + 0.7f);
-		shootButtonPosition = new Vertex(-10f + 0.7f, -game.gameHeight/2 + 1.4f);
-
-		Bullet.bulletSprite.loadAssets();
-
-		super.loadAssets();
+	public void screenChanged() {
+		movementControlPosition = new Vertex(10f - movementControlSize.x - 0.7f, -Game.currentGame.gameHeight/2 + 0.7f);
+		shootButtonPosition = new Vertex(-10f + 0.7f, -Game.currentGame.gameHeight/2 + 1.4f);
 	}
 }

@@ -21,9 +21,4 @@ public class Actor extends Entity {
 	public void draw() {
 		sprite.draw(position);
 	}
-
-
-	public void loadAssets() {
-		sprite.loadAssets();
-	}
 }

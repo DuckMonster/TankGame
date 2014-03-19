@@ -4,6 +4,7 @@ import com.emilstrom.tanks.R;
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
 import com.emilstrom.tanks.game.entity.Entity;
+import com.emilstrom.tanks.helper.Art;
 import com.emilstrom.tanks.helper.Color;
 import com.emilstrom.tanks.helper.Vertex;
 
@@ -29,7 +30,7 @@ public class Tile extends Entity {
 		position = new Vertex(p);
 		tileID = id;
 
-		tileSprite = new Sprite(R.drawable.temp, new Vertex(0,0), false);
+		tileSprite = new Sprite(Art.temp, false);
 		tileSprite.setColor(1f, 1f, 1f, 1f);
 
 		integrity = 20f;
@@ -62,10 +63,5 @@ public class Tile extends Entity {
 
 		tileSprite.setColor(new Color(1f, 1f, 1f, integrity/20f));
 		tileSprite.draw(position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
-	}
-
-
-	public void loadAssets() {
-		tileSprite.loadAssets();
 	}
 }

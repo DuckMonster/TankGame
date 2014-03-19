@@ -2,6 +2,7 @@ package com.emilstrom.tanks.game;
 
 import com.emilstrom.tanks.game.entity.Tank;
 import com.emilstrom.tanks.game.tiles.TileHandler;
+import com.emilstrom.tanks.helper.Art;
 
 /**
  * Created by Emil on 2014-03-18.
@@ -30,7 +31,7 @@ public class Map {
 
 
 	public void loadAssets() {
-		tileHandler.loadAssets();
-		player.loadAssets();
+		Art.loadAssets();
+		player.screenChanged();
 	}
 }
