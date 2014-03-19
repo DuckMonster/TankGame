@@ -23,7 +23,7 @@ public class Tank extends Actor {
 	Vertex shootButtonPosition = new Vertex(0f, 0f);
 
 	Sprite uiBox, triangle;
-	Input oldInput;
+	Input input, oldInput;
 
 	float rotation, velocity;
 	final float maxVelocity = 8f, acceleration = 30f, friction = 40f, turnSpeed = 120f;
@@ -43,27 +43,46 @@ public class Tank extends Actor {
 		position = new Vertex(0,0);
 	}
 
+	Vertex getDirectionVertex() { return new Vertex(-(float)Math.sin(rotation / 180f * Math.PI), (float)Math.cos(rotation / 180f * Math.PI)); }
+
 	public void logic() {
 		super.logic();
 
-		Input in = InputHelper.getInput();
-		if (oldInput == null) oldInput = in;
+		input = InputHelper.getInput();
+		if (oldInput == null) oldInput = input;
 
-		if (in.pressed && !oldInput.pressed) {
-			if (in.position.x >= movementControlPosition.x && in.position.x < movementControlPosition.x + movementControlSize.x &&
-					in.position.y >= movementControlPosition.y && in.position.y < movementControlPosition.y + movementControlSize.y) {
+		if (input.pressed && !oldInput.pressed) {
+			//Check movement input
+			if (input.position.x >= movementControlPosition.x && input.position.x < movementControlPosition.x + movementControlSize.x &&
+					input.position.y >= movementControlPosition.y && input.position.y < movementControlPosition.y + movementControlSize.y) {
 				usingMovement = true;
-			} else if (in.position.x >= shootButtonPosition.x && in.position.x < shootButtonPosition.x + shootButtonSize.x &&
-					in.position.y >= shootButtonPosition.y && in.position.y < shootButtonPosition.y + shootButtonSize.y) {
+			}
+
+			//Check shooting input
+			if (input.position.x >= shootButtonPosition.x && input.position.x < shootButtonPosition.x + shootButtonSize.x &&
+					input.position.y >= shootButtonPosition.y && input.position.y < shootButtonPosition.y + shootButtonSize.y) {
 				shoot();
 			}
 		}
 
-		if (!in.pressed) usingMovement = false;
+		if (!input.pressed) usingMovement = false;
 
+		movement();
+
+		for(Bullet b : bulletList) if (b != null) b.logic();
+
+		//Move camera
+		Vertex cameraPosition = position.plus(getDirectionVertex().times(3f));
+		Game.worldCamera.position.add(cameraPosition.minus(Game.worldCamera.position).times(Game.updateTime * 10f));
+		Game.worldCamera.setRotation(rotation);
+
+		oldInput = input;
+	}
+
+	public void movement() {
 		//Move!
 		if (usingMovement) {
-			movementPosition = new Vertex(in.position.minus(movementControlPosition));
+			movementPosition = new Vertex(input.position.minus(movementControlPosition));
 
 			if (movementPosition.x > movementControlSize.x) movementPosition.x = movementControlSize.x;
 			if (movementPosition.x <= 0) movementPosition.x = 0;
@@ -87,7 +106,7 @@ public class Tank extends Actor {
 			}
 		}
 
-		Vertex directionVertex = new Vertex(-(float)Math.sin(rotation / 180f * Math.PI), (float)Math.cos(rotation / 180f * Math.PI));
+		Vertex directionVertex = getDirectionVertex();
 
 		position.add(directionVertex.times(velocity*Game.updateTime));
 
@@ -99,18 +118,10 @@ public class Tank extends Actor {
 		} else {
 			velocity = Math.min(0, velocity + f);
 		}
-
-
-		//Move camera
-		Vertex cameraPosition = position.plus(directionVertex.times(3f));
-		Game.worldCamera.position.add(cameraPosition.minus(Game.worldCamera.position).times(Game.updateTime * 10f));
-		Game.worldCamera.setRotation(rotation);
-
-		oldInput = in;
 	}
 
 	public void shoot() {
-		Vertex directionVertex = new Vertex(-(float)Math.sin(rotation / 180f * Math.PI), (float)Math.cos(rotation / 180f * Math.PI));
+		Vertex directionVertex = getDirectionVertex();
 
 		bulletList[bulletn] = new Bullet(position, directionVertex, game);
 		bulletn = (bulletn + 1) % bulletList.length;
@@ -131,6 +142,8 @@ public class Tank extends Actor {
 				triangle.draw(movementControlPosition.x + movementPosition.x + xx, movementControlPosition.y + movementPosition.y + yy, new Vertex(0.4f,0.4f), r + 90 * i + 90);
 			}
 		}
+
+		for(Bullet b : bulletList) if (b != null) b.draw();
 	}
 
 
@@ -139,6 +152,8 @@ public class Tank extends Actor {
 		triangle.loadAssets();
 		movementControlPosition = new Vertex(10f - movementControlSize.x - 0.7f, -game.gameHeight/2 + 0.7f);
 		shootButtonPosition = new Vertex(-10f + 0.7f, -game.gameHeight/2 + 1.4f);
+
+		Bullet.bulletSprite.loadAssets();
 
 		super.loadAssets();
 	}

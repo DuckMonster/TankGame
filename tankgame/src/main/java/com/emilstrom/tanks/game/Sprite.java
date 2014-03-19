@@ -124,8 +124,8 @@ public class Sprite {
 		loadAttributes();
 
 		setPosition(pos);
-		scale(scale);
 		rotate(r);
+		scale(scale);
 		draw();
 	}
 	public void draw(float x, float y, Vertex scale, float r) {
