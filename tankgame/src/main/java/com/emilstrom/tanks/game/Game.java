@@ -22,7 +22,7 @@ public class Game implements GLSurfaceView.Renderer {
 	public static Game currentGame;
 	public static Camera worldCamera, uiCamera;
 
-	Map map;
+	public Map map;
 
 	public Game() {
 		worldCamera = new Camera();

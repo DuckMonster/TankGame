@@ -9,7 +9,7 @@ import com.emilstrom.tanks.game.tiles.TileHandler;
 public class Map {
 	Game game;
 
-	TileHandler tileHandler;
+	public TileHandler tileHandler;
 	Tank player;
 
 	public Map(Game g) {

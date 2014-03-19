@@ -49,6 +49,7 @@ public class Tank extends Actor {
 		input = InputHelper.getInput();
 		if (oldInput == null) oldInput = input;
 
+		//INPUT
 		for(int i=0; i<input.length; i++) {
 			if (input[i].pressed && !oldInput[i].pressed) {
 				final Vertex inPos = input[i].position;
