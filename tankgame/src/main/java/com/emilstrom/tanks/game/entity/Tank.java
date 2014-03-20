@@ -139,7 +139,9 @@ public class Tank extends Actor {
 	}
 
 	public void draw() {
-		sprite.draw(position, new Vertex(3,3), rotation);
+		sprite.setColor(new Color(1f, 1f, 1f, 1f));
+		sprite.draw(position, new Vertex(3, 3), rotation);
+
 		uiBox.setColor(new Color(1f, 1f, 1f, 0.3f));
 		uiBox.draw(movementControlPosition.plus(movementControlSize.times(0.5f)), movementControlSize, 0);
 		uiBox.draw(shootButtonPosition.plus(shootButtonSize.times(0.5f)), shootButtonSize, 0);

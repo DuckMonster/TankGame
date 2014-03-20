@@ -4,6 +4,7 @@ import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
 import com.emilstrom.tanks.helper.Art;
 import com.emilstrom.tanks.helper.Color;
+import com.emilstrom.tanks.helper.GameMath;
 import com.emilstrom.tanks.helper.Vertex;
 
 /**
@@ -64,6 +65,21 @@ public class TileHandler {
 			for(int yy=0; yy<mapHeight; yy++) {
 				tileMap[xx + mapWidth*yy] = new Tile(this, new Vertex(xx, yy), 0, currentGame);
 			}
+
+		createOreVein(10, 10, Tile.TILE_COPPER, 1f);
+	}
+
+	public void createOreVein(int x, int y, int type, float strength) {
+		if (x < 0 || x >= mapWidth || y < 0 || y >= mapHeight) return;
+
+		tileMap[x + mapWidth * y] = new Tile(this, new Vertex(x, y), type, currentGame);
+		strength -= GameMath.getRndDouble(0.05, 0.7);
+		if (strength > 0f) {
+			createOreVein(x + 1, y, type, strength);
+			createOreVein(x - 1, y, type, strength);
+			createOreVein(x, y + 1, type, strength);
+			createOreVein(x, y - 1, type, strength);
+		}
 	}
 
 	public void logic() {
@@ -76,8 +92,10 @@ public class TileHandler {
 		cameraPos.x = (float)Math.floor(cameraPos.x / Tile.TILE_SIZE);
 		cameraPos.y = (float)Math.floor(cameraPos.y / Tile.TILE_SIZE);
 
-		for(int xx = (int)cameraPos.x - 6; xx <= cameraPos.x + 6; xx++)
-			for(int yy = (int)cameraPos.y - 6; yy <= cameraPos.y + 6; yy++) {
+		int nmbrOfDraws = (int)Math.ceil(currentGame.gameWidth / Tile.TILE_SIZE)/2 + 1;
+
+		for(int xx = (int)cameraPos.x - nmbrOfDraws; xx <= cameraPos.x + nmbrOfDraws; xx++)
+			for(int yy = (int)cameraPos.y - nmbrOfDraws; yy <= cameraPos.y + nmbrOfDraws; yy++) {
 				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight || tileMap[xx + mapWidth * yy].isDead()) {
 					drawGround(xx, yy);
 					continue;
@@ -86,8 +104,8 @@ public class TileHandler {
 				tileMap[xx + mapWidth * yy].draw();
 			}
 
-		for(int xx = (int)cameraPos.x - 6; xx <= cameraPos.x + 6; xx++)
-			for(int yy = (int)cameraPos.y - 6; yy <= cameraPos.y + 6; yy++) {
+		for(int xx = (int)cameraPos.x - nmbrOfDraws; xx <= cameraPos.x + nmbrOfDraws; xx++)
+			for(int yy = (int)cameraPos.y - nmbrOfDraws; yy <= cameraPos.y + nmbrOfDraws; yy++) {
 				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight) continue;
 
 				tileMap[xx + mapWidth * yy].drawAbove();

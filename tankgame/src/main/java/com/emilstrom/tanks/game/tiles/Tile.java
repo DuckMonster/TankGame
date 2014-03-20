@@ -17,17 +17,19 @@ import com.emilstrom.tanks.helper.Vertex;
  * Created by Emil on 2014-03-19.
  */
 public class Tile extends Entity {
-	public static final float TILE_SIZE = 2;
+	public static final float TILE_SIZE = 2f;
+	public static final int TILE_STONE = 0,
+			TILE_COPPER = 1;
 
 	TileHandler tileHandler;
 
 	public Vertex position;
 
-	Sprite tileSprite, tileHitSprite;
-	Tileset crackSprite;
-	int tileID;
+	Sprite tileHitSprite;
+	Tileset tilesetSprite;
+	int tileID, tilesetX, tilesetY;
 
-	float integrity;
+	float integrity, maxIntegrity;
 	float hitDamage;
 
 	Timer hitTimer;
@@ -40,13 +42,32 @@ public class Tile extends Entity {
 		position = new Vertex(p);
 		tileID = id;
 
-		tileSprite = new Sprite(Art.stone, false);
+		tilesetSprite = new Tileset(Art.tileset, false);
 		tileHitSprite = new Sprite(Art.blank, false);
-		crackSprite = new Tileset(Art.crackSet, false);
-
-		integrity = 20f;
 
 		hitTimer = new Timer(0.4f, true);
+
+		getTileStats();
+	}
+
+	public void getTileStats() {
+		switch(tileID) {
+			case TILE_STONE:
+				tilesetX = 0;
+				tilesetY = 0;
+
+				maxIntegrity = 20f;
+				break;
+
+			case TILE_COPPER:
+				tilesetX = 1;
+				tilesetY = 0;
+
+				maxIntegrity = 60f;
+				break;
+		}
+
+		integrity = maxIntegrity;
 	}
 
 	public boolean isDead() { return integrity <= 0; }
@@ -79,8 +100,8 @@ public class Tile extends Entity {
 	public void draw() {
 		if (isDead()) return;
 
-		tileSprite.setColor(new Color(1f, 1f, 1f, 1f));
-		tileSprite.draw(position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
+		tilesetSprite.setColor(new Color(1f, 1f, 1f, 1f));
+		tilesetSprite.draw(tilesetX, tilesetY, position.times(TILE_SIZE), new Vertex(TILE_SIZE+0.05f, TILE_SIZE+0.05f), 0);
 
 //		if (1f - integrity/20f > 0.1f) {
 //			int tx = (int)Math.floor((1f-integrity/20)*5f);
