@@ -30,7 +30,7 @@ public class Bullet extends Entity {
 		position = new Vertex(pos);
 		direction = new Vertex(dir);
 		velocity = 90f;
-		energy = 30f;
+		energy = 15f;
 
 		explosionEffect = new EffectExplosion(game);
 	}
@@ -48,11 +48,11 @@ public class Bullet extends Entity {
 			Tile t = game.map.tileHandler.collidesWith(checkPosition, new Vertex(1f, 1f));
 			if (t != null) {
 				energy -= t.hit(energy);
-			}
 
-			if (isDead()) {
-				blowUp(checkPosition);
-				break;
+				if (isDead()) {
+					blowUp(t.position.times(Tile.TILE_SIZE));
+					break;
+				}
 			}
 		}
 

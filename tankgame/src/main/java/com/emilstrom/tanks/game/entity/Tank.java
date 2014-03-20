@@ -135,7 +135,7 @@ public class Tank extends Actor {
 		bulletList[bulletn] = new Bullet(position, directionVertex, game);
 		bulletn = (bulletn + 1) % bulletList.length;
 
-		velocity = -10f;
+		velocity = -4f;
 	}
 
 	public void draw() {

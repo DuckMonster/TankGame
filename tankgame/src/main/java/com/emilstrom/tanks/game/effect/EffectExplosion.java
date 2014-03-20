@@ -83,7 +83,7 @@ public class EffectExplosion extends Entity {
 	public void trigger(Vertex v) {
 		triggerPosition = new Vertex(v);
 
-		smokeList = new SmokeCloud[10];
+		smokeList = new SmokeCloud[6];
 		for(int i=0; i<smokeList.length; i++)
 			smokeList[i] = new SmokeCloud(v);
 

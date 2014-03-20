@@ -21,9 +21,10 @@ public class Tile extends Entity {
 
 	TileHandler tileHandler;
 
+	public Vertex position;
+
 	Sprite tileSprite, tileHitSprite;
 	Tileset crackSprite;
-	Vertex position;
 	int tileID;
 
 	float integrity;
@@ -81,11 +82,11 @@ public class Tile extends Entity {
 		tileSprite.setColor(new Color(1f, 1f, 1f, 1f));
 		tileSprite.draw(position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
 
-		if (1f - integrity/20f > 0.1f) {
-			int tx = (int)Math.floor((1f-integrity/20)*5f);
-			crackSprite.setColor(new Color(0f, 0f, 0f, 0.7f));
-			crackSprite.draw(tx, 0, position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
-		}
+//		if (1f - integrity/20f > 0.1f) {
+//			int tx = (int)Math.floor((1f-integrity/20)*5f);
+//			crackSprite.setColor(new Color(0f, 0f, 0f, 0.7f));
+//			crackSprite.draw(tx, 0, position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
+//		}
 	}
 
 	public void drawAbove() {
