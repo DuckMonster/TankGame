@@ -85,6 +85,13 @@ public class TileHandler {
 
 				tileMap[xx + mapWidth * yy].draw();
 			}
+
+		for(int xx = (int)cameraPos.x - 6; xx <= cameraPos.x + 6; xx++)
+			for(int yy = (int)cameraPos.y - 6; yy <= cameraPos.y + 6; yy++) {
+				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight) continue;
+
+				tileMap[xx + mapWidth * yy].drawAbove();
+			}
 	}
 
 	public void drawGround(int x, int y) {
