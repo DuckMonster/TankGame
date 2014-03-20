@@ -63,7 +63,7 @@ public class EffectExplosion extends Entity {
 			if (isDead()) return;
 
 			smokeCloudSprite.setColor(new Color(0f, 0f, 0f, 1f - smokeTimer.percentageDone()));
-			smokeCloudSprite.draw(position, new Vertex(size * 1.1f, size * 1.1f), 0);
+			//smokeCloudSprite.draw(position, new Vertex(size * 1.1f, size * 1.1f), 0);
 		}
 	}
 
@@ -95,7 +95,7 @@ public class EffectExplosion extends Entity {
 
 		if (smokeList != null)
 			for(SmokeCloud s : smokeList)
-				s.logic();
+				if (s != null) s.logic();
 	}
 
 	public void draw() {
@@ -107,7 +107,7 @@ public class EffectExplosion extends Entity {
 
 		if (smokeList != null)
 			for(SmokeCloud s : smokeList)
-				s.draw();
+				if (s != null) s.draw();
 
 		GLES20.glStencilFunc(GLES20.GL_NOTEQUAL, 1, 0xFF);
 		GLES20.glStencilMask(0x00);

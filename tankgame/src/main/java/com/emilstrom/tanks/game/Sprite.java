@@ -1,5 +1,6 @@
 package com.emilstrom.tanks.game;
 
+import android.graphics.Shader;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
@@ -81,19 +82,18 @@ public class Sprite {
 	}
 
 	public void uploadData() {
+		spriteData.loadAttributes();
 		spriteData.uploadData(spriteColor, spriteAlphaColor, getMVPMatrix());
 	}
 
 	public void draw() {
+		spriteData.shaderProgram = ShaderHelper.shaderProgram2D;
 		uploadData();
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 	}
 
 
 	public void draw(Vertex pos) {
-		GLES20.glUseProgram(ShaderHelper.shaderProgram2D);
-		spriteData.loadAttributes();
-
 		setPosition(pos);
 		draw();
 	}
@@ -102,9 +102,6 @@ public class Sprite {
 	}
 
 	public void draw(Vertex pos, Vertex scale, float r) {
-		GLES20.glUseProgram(ShaderHelper.shaderProgram2D);
-		spriteData.loadAttributes();
-
 		setPosition(pos);
 		rotate(r);
 		scale(scale);

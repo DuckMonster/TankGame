@@ -16,11 +16,15 @@ import java.nio.FloatBuffer;
  * Created by Emil on 2014-03-18.
  */
 public class SpriteData {
+	int shaderProgram;
+
 	public SpriteData(int textureID) {
 		this.textureID = textureID;
+		shaderProgram = ShaderHelper.shaderProgram2D;
 	}
 
 	public void bindVertexBuffer() {
+		GLES20.glUseProgram(shaderProgram);
 		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferObject);
 	}
 
@@ -83,13 +87,13 @@ public class SpriteData {
 	public void loadAttributes() {
 		bindVertexBuffer();
 
-		u_color = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_color");
-		u_alphaColor = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_alphaColor");
-		u_texture = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_texture");
-		u_mvp = GLES20.glGetUniformLocation(ShaderHelper.shaderProgram2D, "u_mvpMatrix");
+		u_color = GLES20.glGetUniformLocation(shaderProgram, "u_color");
+		u_alphaColor = GLES20.glGetUniformLocation(shaderProgram, "u_alphaColor");
+		u_texture = GLES20.glGetUniformLocation(shaderProgram, "u_texture");
+		u_mvp = GLES20.glGetUniformLocation(shaderProgram, "u_mvpMatrix");
 
-		a_position = GLES20.glGetAttribLocation(ShaderHelper.shaderProgram2D, "a_vertexPosition");
-		a_texturePosition = GLES20.glGetAttribLocation(ShaderHelper.shaderProgram2D, "a_texturePosition");
+		a_position = GLES20.glGetAttribLocation(shaderProgram, "a_vertexPosition");
+		a_texturePosition = GLES20.glGetAttribLocation(shaderProgram, "a_texturePosition");
 
 		GLES20.glEnableVertexAttribArray(a_position);
 		GLES20.glEnableVertexAttribArray(a_texturePosition);

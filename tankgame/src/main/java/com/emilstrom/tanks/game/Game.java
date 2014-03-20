@@ -22,6 +22,8 @@ public class Game implements GLSurfaceView.Renderer {
 	public static Game currentGame;
 	public static Camera worldCamera, uiCamera;
 
+	private double oldTime = 0;
+
 	public Map map;
 
 	public Game() {
@@ -32,8 +34,13 @@ public class Game implements GLSurfaceView.Renderer {
 		map = new Map(this);
 	}
 
-	public void logic(float time) {
-		updateTime = time;
+	public void logic() {
+		if (oldTime == 0) oldTime = SystemClock.uptimeMillis();
+
+		double newTime = SystemClock.uptimeMillis();
+		updateTime = (float)(newTime - oldTime) * 0.001f;
+		oldTime = newTime;
+
 		map.logic();
 	}
 
@@ -65,6 +72,7 @@ public class Game implements GLSurfaceView.Renderer {
 	}
 
 	public void onDrawFrame(GL10 unused) {
+		logic();
 		draw();
 	}
 

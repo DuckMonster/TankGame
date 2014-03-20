@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import com.emilstrom.tanks.R;
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
+import com.emilstrom.tanks.game.tiles.Tile;
 import com.emilstrom.tanks.helper.Art;
 import com.emilstrom.tanks.helper.Color;
 import com.emilstrom.tanks.helper.GameMath;
@@ -41,7 +42,7 @@ public class Tank extends Actor {
 		sprite = new Sprite(Art.tank, false);
 		uiBox = new Sprite(Art.blank, true);
 		triangle = new Sprite(Art.triangle, true);
-		position = new Vertex(0,0);
+		position = new Vertex(-5,-5);
 	}
 
 	Vertex getDirectionVertex() { return new Vertex(-(float)Math.sin(rotation / 180f * Math.PI), (float)Math.cos(rotation / 180f * Math.PI)); }
@@ -74,13 +75,9 @@ public class Tank extends Actor {
 		if (movementTouchID != -1 && !input[movementTouchID].pressed) movementTouchID = -1;
 
 		movement();
+		updateCamera();
 
 		for(Bullet b : bulletList) if (b != null) b.logic();
-
-		//Move camera
-		Vertex cameraPosition = position.plus(getDirectionVertex().times(3f));
-		Game.worldCamera.position.add(cameraPosition.minus(Game.worldCamera.position).times(Game.updateTime * 10f));
-		Game.worldCamera.setRotation(rotation);
 
 		oldInput = input;
 	}
@@ -112,9 +109,15 @@ public class Tank extends Actor {
 			}
 		}
 
-		Vertex directionVertex = getDirectionVertex();
+		Vertex directionVertex = getDirectionVertex(),
+				movementVertex = directionVertex.times(velocity*Game.updateTime);
 
-		position.add(directionVertex.times(velocity*Game.updateTime));
+		Tile t = game.map.tileHandler.collidesWith(position.plus(new Vertex(movementVertex.x, 0f)), new Vertex(2f, 2f));
+		if (t != null) movementVertex.x = 0;
+		t = game.map.tileHandler.collidesWith(position.plus(new Vertex(0f, movementVertex.y)), new Vertex(2f, 2f));
+		if (t != null) movementVertex.y = 0;
+
+		position.add(movementVertex);
 
 		//Friction
 		float f = friction * Game.updateTime;
@@ -158,5 +161,11 @@ public class Tank extends Actor {
 	public void screenChanged() {
 		movementControlPosition = new Vertex(10f - movementControlSize.x - 0.7f, -Game.currentGame.gameHeight/2 + 0.7f);
 		shootButtonPosition = new Vertex(-10f + 0.7f, -Game.currentGame.gameHeight/2 + 1.4f);
+	}
+
+	public void updateCamera() {
+		Vertex cameraPosition = position.plus(getDirectionVertex().times(3f));
+		Game.worldCamera.position = new Vertex(cameraPosition);
+		Game.worldCamera.setRotation(rotation);
 	}
 }

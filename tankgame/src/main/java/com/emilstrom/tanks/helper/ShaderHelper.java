@@ -50,7 +50,7 @@ public class ShaderHelper {
 		GLES20.glShaderSource(shader, source);
 		GLES20.glCompileShader(shader);
 
-		Log.v(TankActivity.TAG, GLES20.glGetShaderInfoLog(shader));
+		Log.v(TankActivity.TAG, "Shader debug: " + GLES20.glGetShaderInfoLog(shader));
 
 		return shader;
 	}

@@ -1,8 +1,11 @@
 package com.emilstrom.tanks.game.tiles;
 
+import android.os.SystemClock;
+
 import com.emilstrom.tanks.R;
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
+import com.emilstrom.tanks.game.Tileset;
 import com.emilstrom.tanks.game.entity.Entity;
 import com.emilstrom.tanks.helper.Art;
 import com.emilstrom.tanks.helper.Color;
@@ -17,6 +20,7 @@ public class Tile extends Entity {
 	TileHandler tileHandler;
 
 	Sprite tileSprite;
+	Tileset crackSprite;
 	Vertex position;
 	int tileID;
 
@@ -30,8 +34,8 @@ public class Tile extends Entity {
 		position = new Vertex(p);
 		tileID = id;
 
-		tileSprite = new Sprite(Art.temp, false);
-		tileSprite.setColor(1f, 1f, 1f, 1f);
+		tileSprite = new Sprite(Art.stone, false);
+		crackSprite = new Tileset(Art.crackSet, false);
 
 		integrity = 20f;
 	}
@@ -40,8 +44,8 @@ public class Tile extends Entity {
 	public boolean collidesWith(Vertex v, Vertex size) {
 		Vertex myPos = position.times(TILE_SIZE);
 
-		return (v.x + size.x/2 > myPos.x - TILE_SIZE/2 && v.x <= myPos.x + TILE_SIZE/2 &&
-				v.y + size.y/2 > myPos.y - TILE_SIZE/2 && v.y <= myPos.y + TILE_SIZE/2);
+		return (v.x + size.x/2 > myPos.x - TILE_SIZE/2 && v.x - size.x/2 <= myPos.x + TILE_SIZE/2 &&
+				v.y + size.y/2 > myPos.y - TILE_SIZE/2 && v.y - size.y/2 <= myPos.y + TILE_SIZE/2);
 	}
 
 	public float hit(float energy) {
@@ -61,7 +65,14 @@ public class Tile extends Entity {
 	public void draw() {
 		if (isDead()) return;
 
-		tileSprite.setColor(new Color(1f, 1f, 1f, integrity/20f));
+		tileSprite.setColor(new Color(1f, 1f, 1f, 1f));
 		tileSprite.draw(position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
+
+		if (1f - integrity/20f > 0.1f) {
+			int tx = (int)Math.floor((1f-integrity/20)*5f);
+
+			crackSprite.setColor(new Color(0f, 0f, 0f, 0.7f));
+			crackSprite.draw(tx, 0, position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
+		}
 	}
 }

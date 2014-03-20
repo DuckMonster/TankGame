@@ -45,7 +45,7 @@ public class Bullet extends Entity {
 		int precision = 40;
 		for(int i=0; i<precision; i++) {
 			Vertex checkPosition = position.plus(direction.times(velocity * Game.updateTime * ((float)i / (float)precision)));
-			Tile t = game.map.tileHandler.collidesWith(checkPosition, new Vertex(0.7f, 3f));
+			Tile t = game.map.tileHandler.collidesWith(checkPosition, new Vertex(1f, 1f));
 			if (t != null) {
 				energy -= t.hit(energy);
 			}

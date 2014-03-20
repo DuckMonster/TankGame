@@ -1,18 +1,25 @@
 package com.emilstrom.tanks.game.tiles;
 
 import com.emilstrom.tanks.game.Game;
+import com.emilstrom.tanks.game.Sprite;
+import com.emilstrom.tanks.helper.Art;
+import com.emilstrom.tanks.helper.Color;
 import com.emilstrom.tanks.helper.Vertex;
 
 /**
  * Created by Emil on 2014-03-19.
  */
 public class TileHandler {
+	Sprite groundSprite;
 	Game currentGame;
 	Tile tileMap[];
 	int mapWidth, mapHeight;
 
 	public TileHandler(Game g) {
 		currentGame = g;
+
+		groundSprite = new Sprite(Art.dirt, false);
+
 		generateMap();
 	}
 
@@ -22,8 +29,8 @@ public class TileHandler {
 		mapPos.x = (float)Math.floor(mapPos.x / Tile.TILE_SIZE);
 		mapPos.y = (float)Math.floor(mapPos.y / Tile.TILE_SIZE);
 
-		for(int xx=(int)mapPos.x - 1; xx<=mapPos.x+1; xx++)
-			for(int yy=(int)mapPos.y - 1; yy<=mapPos.y+1; yy++) {
+		for(int xx=(int)mapPos.x - 3; xx<=mapPos.x+3; xx++)
+			for(int yy=(int)mapPos.y - 3; yy<=mapPos.y+3; yy++) {
 				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight) continue;
 
 				Tile t = tileMap[xx + mapWidth * yy];
@@ -71,9 +78,17 @@ public class TileHandler {
 
 		for(int xx = (int)cameraPos.x - 6; xx <= cameraPos.x + 6; xx++)
 			for(int yy = (int)cameraPos.y - 6; yy <= cameraPos.y + 6; yy++) {
-				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight) continue;
+				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight || tileMap[xx + mapWidth * yy].isDead()) {
+					drawGround(xx, yy);
+					continue;
+				}
 
 				tileMap[xx + mapWidth * yy].draw();
 			}
+	}
+
+	public void drawGround(int x, int y) {
+		groundSprite.setColor(new Color(1f, 1f, 1f, 1f));
+		groundSprite.draw(new Vertex(x,y).times(Tile.TILE_SIZE), new Vertex(Tile.TILE_SIZE, Tile.TILE_SIZE), 0);
 	}
 }
