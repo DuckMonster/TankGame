@@ -18,7 +18,7 @@ public class Bullet extends Entity {
 
 	Vertex direction;
 	float velocity;
-	float energy;
+	float energy, explosionEnergy;
 
 	EffectExplosion explosionEffect;
 
@@ -31,6 +31,7 @@ public class Bullet extends Entity {
 		direction = new Vertex(dir);
 		velocity = 90f;
 		energy = 15f;
+		explosionEnergy = 8f;
 
 		explosionEffect = new EffectExplosion(game);
 	}
@@ -61,7 +62,7 @@ public class Bullet extends Entity {
 	}
 
 	public void blowUp(Vertex pos) {
-		game.map.tileHandler.explosion(pos, 5f, 1);
+		game.map.tileHandler.explosion(pos, explosionEnergy, 1);
 	}
 
 	public void draw() {

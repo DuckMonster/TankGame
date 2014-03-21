@@ -72,32 +72,83 @@ public class TileHandler {
 	}
 
 	public void generateMap() {
-		mapHeight = 20;
-		mapWidth = 20;
+		mapHeight = 200;
+		mapWidth = 100;
 		tileMap = new Tile[mapWidth * mapHeight];
 		for(int xx=0; xx<mapWidth; xx++)
 			for(int yy=0; yy<mapHeight; yy++) {
-				tileMap[xx + mapWidth*yy] = new Tile(this, new Vertex(xx, yy), 0, currentGame);
-			}
+				if (GameMath.getChance(0.02f))
+					createOreVein(xx, yy, Tile.TILE_COPPER, 0.4f + 0.05f * yy);
 
-		createOreVein(10, 10, Tile.TILE_COPPER, 1f);
+				if (tileMap[xx + mapWidth*yy] == null)
+					tileMap[xx + mapWidth*yy] = new Tile(this, new Vertex(xx, yy), 0, currentGame);
+			}
 	}
 
 	public void createOreVein(int x, int y, int type, float strength) {
-		if (x < 0 || x >= mapWidth || y < 0 || y >= mapHeight) return;
+		if (y < 0 || y >= mapHeight) return;
+
+		x = (int)GameMath.mod(x, mapWidth);
 
 		tileMap[x + mapWidth * y] = new Tile(this, new Vertex(x, y), type, currentGame);
-		strength -= GameMath.getRndDouble(0.05, 0.7);
+		strength -= GameMath.getRndDouble(-0.1, 0.5);
+
 		if (strength > 0f) {
-			createOreVein(x + 1, y, type, strength);
-			createOreVein(x - 1, y, type, strength);
-			createOreVein(x, y + 1, type, strength);
-			createOreVein(x, y - 1, type, strength);
+			int nmbrOfSplits = GameMath.getRndInt(1, 2);
+
+			for(int i=0; i<nmbrOfSplits; i++) {
+				int splitDir = GameMath.getRndInt(0, 3);
+
+				Tile t;
+
+				switch(splitDir) {
+					case 0:
+						t = getTile(x + 1, y);
+						if (t != null && t.tileID != Tile.TILE_STONE) break;
+
+						createOreVein(x + 1, y, type, strength);
+						break;
+
+					case 1:
+						t = getTile(x - 1, y);
+						if (t != null && t.tileID != Tile.TILE_STONE) break;
+
+						createOreVein(x - 1, y, type, strength);
+						break;
+
+					case 2:
+						t = getTile(x, y + 1);
+						if (t != null && t.tileID != Tile.TILE_STONE) break;
+
+						createOreVein(x, y + 1, type, strength);
+						break;
+
+					case 3:
+						t = getTile(x, y - 1);
+						if (t != null && t.tileID != Tile.TILE_STONE) break;
+
+						createOreVein(x, y - 1, type, strength);
+						break;
+				}
+			}
 		}
 	}
 
 	public void logic() {
-		for(Tile t: tileMap) t.logic();
+		Vertex cameraPos = new Vertex(Game.worldCamera.position);
+
+		cameraPos.x = (float)Math.floor(cameraPos.x / Tile.TILE_SIZE);
+		cameraPos.y = (float)Math.floor(cameraPos.y / Tile.TILE_SIZE);
+
+		int nmbrOfDraws = (int)Math.ceil(currentGame.gameWidth / Tile.TILE_SIZE)/2 + 1;
+
+		for(int xx = (int)cameraPos.x - nmbrOfDraws; xx <= cameraPos.x + nmbrOfDraws; xx++)
+			for(int yy = (int)cameraPos.y - nmbrOfDraws; yy <= cameraPos.y + nmbrOfDraws; yy++) {
+				Tile t = getTile(xx, yy);
+				if (t == null) continue;
+
+				t.logic();
+			}
 	}
 
 	public void draw() {
@@ -111,8 +162,8 @@ public class TileHandler {
 		for(int xx = (int)cameraPos.x - nmbrOfDraws; xx <= cameraPos.x + nmbrOfDraws; xx++)
 			for(int yy = (int)cameraPos.y - nmbrOfDraws; yy <= cameraPos.y + nmbrOfDraws; yy++) {
 				Tile t = getTile(xx, yy);
-				if (t == null || t.isDead()) {
-					//drawGround(xx, yy);
+				if (t == null) {
+					drawGround(xx, yy);
 					continue;
 				}
 

@@ -34,6 +34,8 @@ public class Tile extends Entity {
 
 	Timer hitTimer;
 
+	Oredrop oreDrop;
+
 	public Tile(TileHandler th, Vertex p, int id, Game g) {
 		super(g);
 
@@ -88,29 +90,40 @@ public class Tile extends Entity {
 
 		hitTimer.reset();
 
+		if (isDead()) die();
+
 		return damage;
 	}
 
+	public void die() {
+		if (tileID == TILE_STONE) return;
+		oreDrop = new Oredrop(this, game);
+	}
+
 	public void logic() {
+		if (oreDrop != null) oreDrop.logic();
+
 		hitTimer.logic();
 
 		if (isDead()) return;
 	}
 
 	public void draw(int drawOffset) {
-		if (isDead()) return;
+		if (isDead()) {
+			//Draw ground
+			tilesetSprite.setColor(new Color(1f, 1f, 1f, 1f));
+			tilesetSprite.draw(0, 0, position.plus(new Vertex(tileHandler.mapWidth*drawOffset, 0)).times(TILE_SIZE), new Vertex(TILE_SIZE+0.05f, TILE_SIZE+0.05f), 0);
+
+			return;
+		}
 
 		tilesetSprite.setColor(new Color(1f, 1f, 1f, 1f));
 		tilesetSprite.draw(tilesetX, tilesetY, position.plus(new Vertex(tileHandler.mapWidth*drawOffset, 0)).times(TILE_SIZE), new Vertex(TILE_SIZE+0.05f, TILE_SIZE+0.05f), 0);
-
-//		if (1f - integrity/20f > 0.1f) {
-//			int tx = (int)Math.floor((1f-integrity/20)*5f);
-//			crackSprite.setColor(new Color(0f, 0f, 0f, 0.7f));
-//			crackSprite.draw(tx, 0, position.times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
-//		}
 	}
 
 	public void drawAbove(int drawOffset) {
+		if (oreDrop != null) oreDrop.draw(drawOffset);
+
 		if (!hitTimer.isDone()) {
 			tileHitSprite.setColor(new Color(1f, 0f, 0f, hitDamage * (1f - hitTimer.percentageDone())));
 

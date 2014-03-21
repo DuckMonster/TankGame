@@ -11,7 +11,7 @@ public class Map {
 	Game game;
 
 	public TileHandler tileHandler;
-	Tank player;
+	public Tank player;
 
 	public Map(Game g) {
 		game = g;

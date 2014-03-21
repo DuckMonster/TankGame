@@ -56,14 +56,7 @@ public class EffectExplosion extends Entity {
 			if (isDead()) return;
 
 			smokeCloudSprite.setColor(new Color(1f, 1f, 1f, 1f - smokeTimer.percentageDone()));
-			smokeCloudSprite.draw(position, new Vertex(size, size), 0);
-		}
-
-		public void drawBorder() {
-			if (isDead()) return;
-
-			smokeCloudSprite.setColor(new Color(0f, 0f, 0f, 1f - smokeTimer.percentageDone()));
-			//smokeCloudSprite.draw(position, new Vertex(size * 1.1f, size * 1.1f), 0);
+			//smokeCloudSprite.draw(position, new Vertex(size, size), 0);
 		}
 	}
 
@@ -99,24 +92,9 @@ public class EffectExplosion extends Entity {
 	}
 
 	public void draw() {
-		GLES20.glEnable(GLES20.GL_STENCIL_TEST);
-
-		GLES20.glStencilFunc(GLES20.GL_ALWAYS, 1, 0xFF);
-		GLES20.glStencilOp(GLES20.GL_KEEP, GLES20.GL_KEEP, GLES20.GL_REPLACE);
-		GLES20.glStencilMask(0xFF);
-
 		if (smokeList != null)
 			for(SmokeCloud s : smokeList)
 				if (s != null) s.draw();
-
-		GLES20.glStencilFunc(GLES20.GL_NOTEQUAL, 1, 0xFF);
-		GLES20.glStencilMask(0x00);
-
-		if (smokeList != null)
-			for(SmokeCloud s : smokeList)
-				s.drawBorder();
-
-		GLES20.glDisable(GLES20.GL_STENCIL_TEST);
 
 		if (!ringTimer.isDone()) {
 			float ringSize = (float)(1 - Math.pow(Math.E, -ringTimer.percentageDone() * 5.0)) * 10f;

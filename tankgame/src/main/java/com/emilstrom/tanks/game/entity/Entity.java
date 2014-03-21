@@ -8,7 +8,7 @@ import com.emilstrom.tanks.helper.Vertex;
  * Created by Emil on 2014-03-18.
  */
 public class Entity {
-	Game game;
+	public Game game;
 
 	public Entity(Game g) {
 		game = g;

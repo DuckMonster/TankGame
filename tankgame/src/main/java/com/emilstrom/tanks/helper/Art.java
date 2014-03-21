@@ -19,7 +19,9 @@ public class Art {
 			temp = new SpriteData(R.drawable.temp);
 
 	public static TilesetData crackSet = new TilesetData(R.drawable.crackset, 16, 16),
-			tileset = new TilesetData(R.drawable.tileset, 16, 16);
+			tileset = new TilesetData(R.drawable.tileset, 16, 16),
+			oreset = new TilesetData(R.drawable.oreset, 8, 8),
+			orefillset = new TilesetData(R.drawable.orefillset, 8, 8);
 
 	public static void loadAssets() {
 		tank.loadAssets();
@@ -34,5 +36,7 @@ public class Art {
 
 		crackSet.loadAssets();
 		tileset.loadAssets();
+		oreset.loadAssets();
+		orefillset.loadAssets();
 	}
 }

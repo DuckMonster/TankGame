@@ -13,6 +13,7 @@ import com.emilstrom.tanks.helper.Color;
 import com.emilstrom.tanks.helper.GameMath;
 import com.emilstrom.tanks.helper.Input;
 import com.emilstrom.tanks.helper.InputHelper;
+import com.emilstrom.tanks.helper.Timer;
 import com.emilstrom.tanks.helper.Vertex;
 
 /**
@@ -29,8 +30,11 @@ public class Tank extends Actor {
 
 	Input input[], oldInput[];
 
-	float rotation, velocity;
+	public float rotation, velocity;
 	final float maxVelocity = 8f, acceleration = 30f, friction = 40f, turnSpeed = 120f;
+
+	float fireSpeed = 2.5f;
+	Timer fireTimer = new Timer(1f / fireSpeed, true);
 
 	int movementTouchID = -1;
 	Vertex movementPosition;
@@ -55,9 +59,11 @@ public class Tank extends Actor {
 		input = InputHelper.getInput();
 		if (oldInput == null) oldInput = input;
 
+		fireTimer.logic();
+
 		//INPUT
 		for(int i=0; i<input.length; i++) {
-			if (input[i].pressed && !oldInput[i].pressed) {
+			if (input[i].pressed) {
 				final Vertex inPos = input[i].position;
 
 				//Check movement input
@@ -67,7 +73,8 @@ public class Tank extends Actor {
 				}
 
 				//Check shooting input
-				if (inPos.x >= shootButtonPosition.x && inPos.x < shootButtonPosition.x + shootButtonSize.x &&
+				if (fireTimer.isDone() &&
+						inPos.x >= shootButtonPosition.x && inPos.x < shootButtonPosition.x + shootButtonSize.x &&
 						inPos.y >= shootButtonPosition.y && inPos.y < shootButtonPosition.y + shootButtonSize.y) {
 					shoot();
 				}
@@ -118,7 +125,6 @@ public class Tank extends Actor {
 
 				if (yPerc < 0f && velocity > maxVelocity * yPerc) {
 					velocity = Math.max(velocity - acc, maxVelocity * yPerc);
-					Log.v(TankActivity.TAG, "Backing up");
 				}
 			}
 		}
@@ -140,7 +146,9 @@ public class Tank extends Actor {
 		bulletList[bulletn] = new Bullet(position, directionVertex, game);
 		bulletn = (bulletn + 1) % bulletList.length;
 
-		velocity = -4f;
+		velocity = -8f;
+
+		fireTimer.reset();
 	}
 
 	public void draw() {
