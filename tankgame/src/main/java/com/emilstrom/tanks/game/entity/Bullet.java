@@ -51,6 +51,7 @@ public class Bullet extends Entity {
 
 				if (isDead()) {
 					blowUp(t.position.times(Tile.TILE_SIZE));
+					explosionEffect.trigger(checkPosition);
 					break;
 				}
 			}
@@ -60,7 +61,6 @@ public class Bullet extends Entity {
 	}
 
 	public void blowUp(Vertex pos) {
-		explosionEffect.trigger(pos);
 		game.map.tileHandler.explosion(pos, 5f, 1);
 	}
 

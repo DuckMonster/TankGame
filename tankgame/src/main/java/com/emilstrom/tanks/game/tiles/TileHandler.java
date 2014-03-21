@@ -2,6 +2,7 @@ package com.emilstrom.tanks.game.tiles;
 
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
+import com.emilstrom.tanks.game.Tileset;
 import com.emilstrom.tanks.helper.Art;
 import com.emilstrom.tanks.helper.Color;
 import com.emilstrom.tanks.helper.GameMath;
@@ -11,7 +12,7 @@ import com.emilstrom.tanks.helper.Vertex;
  * Created by Emil on 2014-03-19.
  */
 public class TileHandler {
-	Sprite groundSprite;
+	Tileset groundSprite;
 	Game currentGame;
 	Tile tileMap[];
 	int mapWidth, mapHeight;
@@ -19,24 +20,36 @@ public class TileHandler {
 	public TileHandler(Game g) {
 		currentGame = g;
 
-		groundSprite = new Sprite(Art.dirt, false);
+		groundSprite = new Tileset(Art.tileset, false);
 
 		generateMap();
 	}
 
+	public Tile getTile(int x, int y) {
+		x = (int)GameMath.mod(x, mapWidth);
+		if (y < 0 || y >= mapHeight) return null;
+
+		return tileMap[x + mapWidth * y];
+	}
+
+	public int getMapOffset(int x) {
+		return (int)Math.floor((float)x / (float)mapWidth);
+	}
+
 	public Tile collidesWith(Vertex p, Vertex s) {
-		Vertex mapPos = new Vertex(p);
+		Vertex tilePos = new Vertex(p);
 
-		mapPos.x = (float)Math.floor(mapPos.x / Tile.TILE_SIZE);
-		mapPos.y = (float)Math.floor(mapPos.y / Tile.TILE_SIZE);
+		tilePos.x = (float)Math.floor(p.x / Tile.TILE_SIZE);
+		tilePos.y = (float)Math.floor(p.y / Tile.TILE_SIZE);
 
-		for(int xx=(int)mapPos.x - 3; xx<=mapPos.x+3; xx++)
-			for(int yy=(int)mapPos.y - 3; yy<=mapPos.y+3; yy++) {
-				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight) continue;
+		for(int xx=(int)tilePos.x - 3; xx<=tilePos.x + 3; xx++)
+			for(int yy=(int)tilePos.y - 3; yy<=tilePos.y + 3; yy++) {
+				Tile t = getTile(xx, yy);
+				if (t == null || t.isDead()) continue;
 
-				Tile t = tileMap[xx + mapWidth * yy];
+				Vertex checkPos = new Vertex(p).plus(new Vertex(mapWidth * Tile.TILE_SIZE, 0).times(-getMapOffset(xx)));
 
-				if (!t.isDead() && t.collidesWith(p, s)) return tileMap[xx + mapWidth * yy];
+				if (t.collidesWith(checkPos, s)) return t;
 			}
 
 		return null;
@@ -50,10 +63,11 @@ public class TileHandler {
 
 		for(int xx = (int)mapPos.x - radius; xx <= (int)mapPos.x + radius; xx++)
 			for(int yy = (int)mapPos.y - radius; yy <= (int)mapPos.y + radius; yy++) {
-				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight) continue;
+				Tile t = getTile(xx, yy);
+				if (t == null || t.isDead()) continue;
 
 				float perc = 1f - (new Vertex(xx, yy).minus(mapPos).getLength() / 5);
-				tileMap[xx + mapWidth * yy].hit(force * perc);
+				t.hit(force * perc);
 			}
 	}
 
@@ -96,24 +110,26 @@ public class TileHandler {
 
 		for(int xx = (int)cameraPos.x - nmbrOfDraws; xx <= cameraPos.x + nmbrOfDraws; xx++)
 			for(int yy = (int)cameraPos.y - nmbrOfDraws; yy <= cameraPos.y + nmbrOfDraws; yy++) {
-				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight || tileMap[xx + mapWidth * yy].isDead()) {
-					drawGround(xx, yy);
+				Tile t = getTile(xx, yy);
+				if (t == null || t.isDead()) {
+					//drawGround(xx, yy);
 					continue;
 				}
 
-				tileMap[xx + mapWidth * yy].draw();
+				t.draw(getMapOffset(xx));
 			}
 
 		for(int xx = (int)cameraPos.x - nmbrOfDraws; xx <= cameraPos.x + nmbrOfDraws; xx++)
 			for(int yy = (int)cameraPos.y - nmbrOfDraws; yy <= cameraPos.y + nmbrOfDraws; yy++) {
-				if (xx < 0 || yy < 0 || xx >= mapWidth || yy >= mapHeight) continue;
+				Tile t = getTile(xx, yy);
+				if (t == null) continue;
 
-				tileMap[xx + mapWidth * yy].drawAbove();
+				t.drawAbove(getMapOffset(xx));
 			}
 	}
 
 	public void drawGround(int x, int y) {
 		groundSprite.setColor(new Color(1f, 1f, 1f, 1f));
-		groundSprite.draw(new Vertex(x,y).times(Tile.TILE_SIZE), new Vertex(Tile.TILE_SIZE, Tile.TILE_SIZE), 0);
+		groundSprite.draw(0, 0, new Vertex(x,y).times(Tile.TILE_SIZE), new Vertex(Tile.TILE_SIZE, Tile.TILE_SIZE), 0);
 	}
 }

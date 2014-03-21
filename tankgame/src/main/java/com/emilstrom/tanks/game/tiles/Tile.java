@@ -53,14 +53,14 @@ public class Tile extends Entity {
 	public void getTileStats() {
 		switch(tileID) {
 			case TILE_STONE:
-				tilesetX = 0;
+				tilesetX = 1;
 				tilesetY = 0;
 
 				maxIntegrity = 20f;
 				break;
 
 			case TILE_COPPER:
-				tilesetX = 1;
+				tilesetX = 2;
 				tilesetY = 0;
 
 				maxIntegrity = 60f;
@@ -97,11 +97,11 @@ public class Tile extends Entity {
 		if (isDead()) return;
 	}
 
-	public void draw() {
+	public void draw(int drawOffset) {
 		if (isDead()) return;
 
 		tilesetSprite.setColor(new Color(1f, 1f, 1f, 1f));
-		tilesetSprite.draw(tilesetX, tilesetY, position.times(TILE_SIZE), new Vertex(TILE_SIZE+0.05f, TILE_SIZE+0.05f), 0);
+		tilesetSprite.draw(tilesetX, tilesetY, position.plus(new Vertex(tileHandler.mapWidth*drawOffset, 0)).times(TILE_SIZE), new Vertex(TILE_SIZE+0.05f, TILE_SIZE+0.05f), 0);
 
 //		if (1f - integrity/20f > 0.1f) {
 //			int tx = (int)Math.floor((1f-integrity/20)*5f);
@@ -110,12 +110,12 @@ public class Tile extends Entity {
 //		}
 	}
 
-	public void drawAbove() {
+	public void drawAbove(int drawOffset) {
 		if (!hitTimer.isDone()) {
 			tileHitSprite.setColor(new Color(1f, 0f, 0f, hitDamage * (1f - hitTimer.percentageDone())));
 
 			Vertex randomPos = new Vertex((float)GameMath.getRndDouble(-0.1f, 0.1f), (float)GameMath.getRndDouble(-0.1f, 0.1f)).times(1f - hitTimer.percentageDone());
-			tileHitSprite.draw(position.plus(randomPos).times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
+			tileHitSprite.draw(position.plus(new Vertex(tileHandler.mapWidth*drawOffset, 0)).plus(randomPos).times(TILE_SIZE), new Vertex(TILE_SIZE, TILE_SIZE), 0);
 		}
 	}
 }

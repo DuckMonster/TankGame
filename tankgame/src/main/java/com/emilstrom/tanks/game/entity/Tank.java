@@ -1,8 +1,10 @@
 package com.emilstrom.tanks.game.entity;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.emilstrom.tanks.R;
+import com.emilstrom.tanks.TankActivity;
 import com.emilstrom.tanks.game.Game;
 import com.emilstrom.tanks.game.Sprite;
 import com.emilstrom.tanks.game.tiles.Tile;
@@ -83,6 +85,15 @@ public class Tank extends Actor {
 	}
 
 	public void movement() {
+		//Friction
+		float f = friction * Game.updateTime;
+
+		if (velocity > 0) {
+			velocity = Math.max(0, velocity - f);
+		} else {
+			velocity = Math.min(0, velocity + f);
+		}
+
 		//Move!
 		if (movementTouchID != -1) {
 			movementPosition = new Vertex(input[movementTouchID].position.minus(movementControlPosition));
@@ -95,16 +106,19 @@ public class Tank extends Actor {
 			float xPerc = movementPosition.x / movementControlSize.x * 2.0f - 1.0f,
 					yPerc = movementPosition.y / movementControlSize.y * 2.0f - 1.0f;
 
-			if (Math.abs(xPerc) > 0.2f)
+			if (Math.abs(xPerc) > 0.1f)
 				rotation += turnSpeed * -xPerc * Game.updateTime;
 
 			if (Math.abs(yPerc) > 0.2f) {
 				float acc = (acceleration + friction) * Game.updateTime;
 
-				if (yPerc > 0f) {
-					if (velocity + acc < maxVelocity*yPerc) velocity += acc;
-				} else if (yPerc < 0f) {
-					if (velocity + acc > maxVelocity*yPerc) velocity -= acc;
+				if (yPerc > 0f && velocity < maxVelocity * yPerc) {
+					velocity = Math.min(velocity + acc, maxVelocity * yPerc);
+				}
+
+				if (yPerc < 0f && velocity > maxVelocity * yPerc) {
+					velocity = Math.max(velocity - acc, maxVelocity * yPerc);
+					Log.v(TankActivity.TAG, "Backing up");
 				}
 			}
 		}
@@ -118,15 +132,6 @@ public class Tank extends Actor {
 		if (t != null) movementVertex.y = 0;
 
 		position.add(movementVertex);
-
-		//Friction
-		float f = friction * Game.updateTime;
-
-		if (velocity > 0) {
-			velocity = Math.max(0, velocity - f);
-		} else {
-			velocity = Math.min(0, velocity + f);
-		}
 	}
 
 	public void shoot() {
